@@ -27,11 +27,6 @@ SELECT
   , parent_ticket_key
   , ticket_name
   , update_date
-  , MAX(update_date) OVER(PARTITION BY ticket_key) AS latest_update_date
-  , CASE
-      WHEN update_date = MAX(update_date) OVER(PARTITION BY ticket_key) THEN 'Current Row'
-      ELSE 'Not Current Row' END
-  AS is_current_row
   , assignee
   , end_date
   , ticket_type
