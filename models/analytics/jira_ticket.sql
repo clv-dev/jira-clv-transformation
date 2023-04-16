@@ -8,7 +8,7 @@ WITH jira_ticket__source AS (
   SELECT
     "Key" :: VARCHAR(10) AS ticket_key
     , sprint :: VARCHAR(512) AS sprint
-    , status :: VARCHAR(25) AS tiket_status
+    , status :: VARCHAR(25) AS ticket_status
     , parent :: VARCHAR(10) AS parent_ticket_key
     , summary :: VARCHAR(512) AS ticket_name
     , TO_TIMESTAMP(updated, 'MM/DD/YYYY HH24:MI:SS') AS update_date
@@ -21,12 +21,17 @@ WITH jira_ticket__source AS (
 )
 
 SELECT
-  ticket_key
+  ticket_key -- natural key
   , sprint
-  , tiket_status
+  , ticket_status
   , parent_ticket_key
   , ticket_name
   , update_date
+  , MAX(update_date) OVER(PARTITION BY ticket_key) AS latest_update_date
+  , CASE
+      WHEN update_date = MAX(update_date) OVER(PARTITION BY ticket_key) THEN 'Current Row'
+      ELSE 'Not Current Row' END
+  AS is_current_row
   , assignee
   , end_date
   , ticket_type
