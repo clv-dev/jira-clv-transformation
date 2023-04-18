@@ -6,10 +6,17 @@ WITH jira_ticket_generate AS (
 
 , jira_ticket__current_row_flag AS (
   SELECT
-    *
-    , CASE
-        WHEN update_date = MAX(update_date) OVER(PARTITION BY ticket_key) THEN 'Current Row'
-        ELSE 'Not Current Row' END
+    ticket_key
+    , UNNEST(STRING_TO_ARRAY(sprint, ';')) AS sprint
+    , ticket_status
+    , parent_ticket_key
+    , ticket_name
+    , update_date
+    , assignee
+    , end_date
+    , ticket_type
+    , start_date
+    , story_points
     AS is_current_row
   FROM jira_ticket_generate
 )
