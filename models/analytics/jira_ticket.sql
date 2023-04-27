@@ -13,7 +13,7 @@ WITH jira_ticket_generate AS (
     , CASE
         WHEN jira_parent.parent_ticket_key IS NOT NULL THEN TRUE 
         ELSE FALSE END
-    AS is_parent
+      AS is_parent
     , jira_ticket. ticket_name
     , jira_ticket. update_date
     , jira_ticket. assignee
@@ -26,6 +26,10 @@ WITH jira_ticket_generate AS (
         WHEN update_date = MAX(update_date) OVER(PARTITION BY dde_iteration, ticket_key) THEN 'Current Row'
         ELSE 'Not Current Row' END
       AS is_current_row
+    , CASE
+        WHEN LENGTH(sprint) > 20 THEN 'Delayed Task'
+        ELSE 'Not Delayed Task' END
+      AS is_delayed_task
   FROM jira_ticket_generate AS jira_ticket
   LEFT JOIN (
       SELECT DISTINCT parent_ticket_key
@@ -41,6 +45,7 @@ SELECT
   , ticket_status
   , parent_ticket_key
   , is_parent
+  , is_delayed_task
   , ticket_name
   , update_date
   , assignee
