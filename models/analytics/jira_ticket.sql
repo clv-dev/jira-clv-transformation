@@ -10,10 +10,6 @@ WITH jira_ticket_generate AS (
     , jira_ticket. sprint
     , jira_ticket. ticket_status
     , jira_ticket. parent_ticket_key
-    , CASE
-        WHEN jira_parent.parent_ticket_key IS NOT NULL THEN TRUE 
-        ELSE FALSE END
-      AS is_parent
     , jira_ticket. ticket_name
     , jira_ticket. update_date
     , jira_ticket. assignee
@@ -23,12 +19,16 @@ WITH jira_ticket_generate AS (
     , jira_ticket. story_points
     , jira_date.dde_iteration AS update_iteration
     , CASE
-        WHEN update_date = MAX(update_date) OVER(PARTITION BY dde_iteration, ticket_key) THEN 'Current Row'
-        ELSE 'Not Current Row' END
+        WHEN jira_parent.parent_ticket_key IS NOT NULL THEN TRUE
+        ELSE FALSE END
+      AS is_parent
+    , CASE
+        WHEN update_date = MAX(update_date) OVER(PARTITION BY dde_iteration, ticket_key) THEN TRUE
+        ELSE FALSE END
       AS is_current_row
     , CASE
-        WHEN LENGTH(sprint) > 20 THEN 'Delayed Task'
-        ELSE 'Not Delayed Task' END
+        WHEN LENGTH(sprint) > 20 THEN TRUE
+        ELSE FALSE END
       AS is_delayed_task
   FROM jira_ticket_generate AS jira_ticket
   LEFT JOIN (
