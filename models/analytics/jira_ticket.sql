@@ -6,42 +6,48 @@ WITH jira_ticket_generate AS (
 
 , jira_ticket_add_boolean_columns AS (
   SELECT
-    a1.ticket_key
-    , a1. sprint
-    , a1. ticket_status
-    , a1. parent_ticket_key
+    jira_ticket.ticket_key
+    , jira_ticket. sprint
+    , jira_ticket. ticket_status
+    , jira_ticket. parent_ticket_key
     , CASE
-        WHEN a2.parent_ticket_key IS NOT NULL THEN TRUE 
+        WHEN jira_parent.parent_ticket_key IS NOT NULL THEN TRUE 
         ELSE FALSE END
     AS is_parent
-    , a1. ticket_name
-    , a1. update_date
-    , a1. assignee
-    , a1. end_date
-    , a1. ticket_type
-    , a1. start_date
-    , a1. story_points
-  FROM jira_ticket_generate AS a1
-  LEFT JOIN (
-      SELECT DISTINCT parent_ticket_key
-      FROM jira_ticket_generate) AS a2
-    ON a1.ticket_key = a2.parent_ticket_key
-)
-
-, jira_ticket__add_boolean AS (
-  SELECT
-    jira_ticket.*
+    , jira_ticket. ticket_name
+    , jira_ticket. update_date
+    , jira_ticket. assignee
+    , jira_ticket. end_date
+    , jira_ticket. ticket_type
+    , jira_ticket. start_date
+    , jira_ticket. story_points
     , jira_date.dde_iteration AS update_iteration
     , CASE
         WHEN update_date = MAX(update_date) OVER(PARTITION BY dde_iteration, ticket_key) THEN 'Current Row'
         ELSE 'Not Current Row' END
       AS is_current_row
-  FROM jira_ticket_add_boolean_columns AS jira_ticket
-  LEFT JOIN {{ ref("jira_date") }} AS jira_date
+  FROM jira_ticket_generate AS jira_ticket
+  LEFT JOIN (
+      SELECT DISTINCT parent_ticket_key
+      FROM jira_ticket_generate) AS jira_parent
+    ON jira_ticket.ticket_key = jira_parent.parent_ticket_key
+  LEFT JOIN jira_analytics.jira_date AS jira_date
     ON jira_ticket.update_date :: date = jira_date.date
 )
 
 SELECT 
-  *
+  ticket_key
   , UNNEST(STRING_TO_ARRAY(sprint, ';')) AS sprint
-FROM jira_ticket__add_boolean
+  , ticket_status
+  , parent_ticket_key
+  , is_parent
+  , ticket_name
+  , update_date
+  , assignee
+  , end_date
+  , ticket_type
+  , start_date
+  , story_points
+  , update_iteration
+  , is_current_row
+FROM jira_ticket_add_boolean_columns
