@@ -1,14 +1,13 @@
 WITH jira_ticket_generate AS (
   SELECT
     *
-  FROM jira_analytics.base_jira_ticket
+  FROM jira_analytics.historic_jira_ticket
 )
 
 , jira_ticket_add_boolean_columns AS (
   SELECT
     a1.ticket_key
     , a1. sprint
-    --, UNNEST(STRING_TO_ARRAY(sprint, ';')) AS sprint
     , a1. ticket_status
     , a1. parent_ticket_key
     , CASE
@@ -29,17 +28,20 @@ WITH jira_ticket_generate AS (
     ON a1.ticket_key = a2.parent_ticket_key
 )
 
-SELECT
-  ticket_key
+, jira_ticket__add_boolean AS (
+  SELECT
+    jira_ticket.*
+    , jira_date.dde_iteration AS update_iteration
+    , CASE
+        WHEN update_date = MAX(update_date) OVER(PARTITION BY dde_iteration, ticket_key) THEN 'Current Row'
+        ELSE 'Not Current Row' END
+      AS is_current_row
+  FROM jira_ticket_add_boolean_columns AS jira_ticket
+  LEFT JOIN {{ ref("jira_date") }} AS jira_date
+    ON jira_ticket.update_date :: date = jira_date.date
+)
+
+SELECT 
+  *
   , UNNEST(STRING_TO_ARRAY(sprint, ';')) AS sprint
-  , ticket_status
-  , parent_ticket_key
-  , is_parent
-  , ticket_name
-  , update_date
-  , assignee
-  , end_date
-  , ticket_type
-  , start_date
-  , story_points
-FROM jira_ticket_add_boolean_columns
+FROM jira_ticket__add_boolean

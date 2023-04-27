@@ -1,7 +1,7 @@
 WITH jira_ticket__source AS (
   SELECT
     *
-  FROM jira_intermediate.ticket
+  FROM jira_intermediate.base_jira_ticket
 )
 
 , jira_ticket__rename_recast AS (
