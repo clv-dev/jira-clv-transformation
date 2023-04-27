@@ -1,7 +1,7 @@
 WITH jira_ticket_generate AS (
   SELECT
     *
-  FROM jira_analytics.historic_jira_ticket
+  FROM jira_intermediate.historic_jira_ticket
 )
 
 , jira_ticket_add_boolean_columns AS (
