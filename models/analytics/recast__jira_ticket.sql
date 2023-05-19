@@ -1,7 +1,7 @@
 WITH jira_ticket__source AS (
   SELECT
     *
-  FROM jira_intermediate.base_jira_ticket
+  FROM `looker-team-management-386803.jira_clv_staging.base_jira_ticket`
 )
 
 , jira_ticket__rename_recast AS (
