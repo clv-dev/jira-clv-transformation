@@ -1,22 +1,22 @@
 WITH jira_ticket_generate AS (
   SELECT
     *
-  FROM jira_intermediate.historic_jira_ticket
+  FROM `looker-team-management-386803.jira_clv_staging.historical__recast__jira_ticket`
 )
 
 , jira_ticket_add_boolean_columns AS (
   SELECT
     jira_ticket.ticket_key
-    , jira_ticket. sprint
-    , jira_ticket. ticket_status
-    , jira_ticket. parent_ticket_key
-    , jira_ticket. ticket_name
-    , jira_ticket. update_date
-    , jira_ticket. assignee
-    , jira_ticket. end_date
-    , jira_ticket. ticket_type
-    , jira_ticket. start_date
-    , jira_ticket. story_points
+    , jira_ticket.sprint
+    , jira_ticket.ticket_status
+    , jira_ticket.parent_ticket_key
+    , jira_ticket.ticket_name
+    , jira_ticket.update_date
+    , jira_ticket.assignee
+    , jira_ticket.end_date
+    , jira_ticket.ticket_type
+    , jira_ticket.start_date
+    , jira_ticket.story_points
     , jira_date.dde_iteration AS update_iteration
     , CASE
         WHEN jira_parent.parent_ticket_key IS NOT NULL THEN TRUE
@@ -36,7 +36,7 @@ WITH jira_ticket_generate AS (
       FROM jira_ticket_generate) AS jira_parent
     ON jira_ticket.ticket_key = jira_parent.parent_ticket_key
   LEFT JOIN jira_analytics.jira_date AS jira_date
-    ON jira_ticket.update_date :: date = jira_date.date
+    ON CAST(jira_ticket.update_date AS DATE) = jira_date.date
 )
 
 SELECT 
