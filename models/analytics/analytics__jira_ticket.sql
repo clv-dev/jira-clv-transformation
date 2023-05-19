@@ -35,7 +35,7 @@ WITH jira_ticket_generate AS (
       SELECT DISTINCT parent_ticket_key
       FROM jira_ticket_generate) AS jira_parent
     ON jira_ticket.ticket_key = jira_parent.parent_ticket_key
-  LEFT JOIN `looker-team-management-386803.jira_clv_analytics.jira_date` AS jira_date
+  LEFT JOIN {{ ref('jira_date') }} AS jira_date
     ON CAST(jira_ticket.update_date AS DATE) = jira_date.date
 )
 
