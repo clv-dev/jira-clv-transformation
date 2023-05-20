@@ -92,3 +92,4 @@ SELECT
   , is_current_row
 FROM jira_ticket_add_boolean_columns
 WHERE sprint IS NULL
+--Filter set for Looker Studio reporting: update_iteration within reporting iteration & is_current_row = True
