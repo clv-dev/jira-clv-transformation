@@ -1,7 +1,7 @@
 WITH jira_ticket_generate AS (
   SELECT
     *
-  FROM `looker-team-management-386803.jira_clv_staging.historical__recast__jira_ticket`
+  FROM `looker-team-management-386803.jira_clv_staging.historic_jira_ticket`
 )
 
 , jira_ticket_add_boolean_columns AS (
