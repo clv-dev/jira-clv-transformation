@@ -48,7 +48,8 @@ WITH jira_ticket_generate AS (
       AS is_delayed_task
   FROM jira_ticket__recast AS jira_ticket
   LEFT JOIN (
-      SELECT DISTINCT parent_ticket_key
+      SELECT DISTINCT
+        parent_ticket_key
       FROM jira_ticket__recast) AS jira_parent
     ON jira_ticket.ticket_key = jira_parent.parent_ticket_key
   LEFT JOIN {{ ref('jira_date') }} AS jira_date
