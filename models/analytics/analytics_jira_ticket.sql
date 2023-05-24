@@ -1,7 +1,7 @@
 WITH jira_ticket_generate AS (
   SELECT
     *
-  FROM `looker-team-management-386803.jira_clv_staging.historic_jira_ticket`
+  FROM `looker-team-management-386803.jira_clv_staging.historical_jira_ticket`
 )
 
 , jira_ticket__recast AS (
@@ -48,7 +48,8 @@ WITH jira_ticket_generate AS (
       AS is_delayed_task
   FROM jira_ticket__recast AS jira_ticket
   LEFT JOIN (
-      SELECT DISTINCT parent_ticket_key
+      SELECT DISTINCT
+        parent_ticket_key
       FROM jira_ticket__recast) AS jira_parent
     ON jira_ticket.ticket_key = jira_parent.parent_ticket_key
   LEFT JOIN {{ ref('jira_date') }} AS jira_date
@@ -92,3 +93,4 @@ SELECT
   , is_current_row
 FROM jira_ticket_add_boolean_columns
 WHERE sprint IS NULL
+--Filter set for Looker Studio reporting: update_iteration within reporting iteration & is_current_row = True
