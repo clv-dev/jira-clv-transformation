@@ -1,7 +1,7 @@
 WITH jira_ticket_generate AS (
   SELECT
     *
-  FROM `looker-team-management-386803.jira_clv_staging.historic_jira_ticket`
+  FROM `looker-team-management-386803.jira_clv_staging.historical_jira_ticket`
 )
 
 , jira_ticket__recast AS (
