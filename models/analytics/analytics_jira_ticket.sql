@@ -22,17 +22,17 @@ WITH jira_ticket_generate AS (
 
 , jira_ticket_add_update_iteration AS (
   SELECT
-    jira_ticket.ticket_key
-    , jira_ticket.sprint
-    , jira_ticket.ticket_status
-    , jira_ticket.parent_ticket_key
-    , jira_ticket.ticket_name
-    , jira_ticket.update_date
-    , jira_ticket.assignee
-    , jira_ticket.end_date
-    , jira_ticket.ticket_type
-    , jira_ticket.start_date
-    , jira_ticket.story_points
+    ticket_key
+    , sprint
+    , ticket_status
+    , parent_ticket_key
+    , ticket_name
+    , update_date
+    , assignee
+    , end_date
+    , ticket_type
+    , start_date
+    , story_points
     , CASE
         WHEN update_date BETWEEN '2023-02-15' AND '2023-02-28' THEN 'PI8 Iteration 1'
         WHEN update_date BETWEEN '2023-03-01' AND '2023-03-14' THEN 'PI8 Iteration 2'
@@ -47,12 +47,7 @@ WITH jira_ticket_generate AS (
         WHEN update_date BETWEEN '2023-07-12 10:00:01' AND '2023-07-25 10:00:00' THEN 'PI9 Iteration 5'
         ELSE 'Undefined' END 
     AS update_iteration
-  FROM jira_ticket__recast AS jira_ticket
-  LEFT JOIN (
-      SELECT DISTINCT
-        parent_ticket_key
-      FROM jira_ticket__recast) AS jira_parent
-    ON jira_ticket.ticket_key = jira_parent.parent_ticket_key
+  FROM jira_ticket__recast
 )
 
 , jira_ticket_define_flags AS (
@@ -60,7 +55,7 @@ WITH jira_ticket_generate AS (
         ticket_key
         , sprint
         , ticket_status
-        , parent_ticket_key
+        , jira_ticket.parent_ticket_key
         , ticket_name
         , update_date
         , assignee
@@ -70,7 +65,7 @@ WITH jira_ticket_generate AS (
         , story_points
         , update_iteration
         , CASE
-            WHEN parent_ticket_key IS NOT NULL THEN TRUE
+            WHEN jira_parent.parent_ticket_key IS NOT NULL THEN TRUE
             ELSE FALSE END
         AS is_parent
         , CASE
@@ -81,7 +76,12 @@ WITH jira_ticket_generate AS (
             WHEN LENGTH(sprint) > 20 THEN TRUE
             ELSE FALSE END
         AS is_delayed_task
-    FROM jira_ticket_add_update_iteration
+    FROM jira_ticket_add_update_iteration AS jira_ticket
+    LEFT JOIN (
+      SELECT DISTINCT
+        parent_ticket_key
+      FROM jira_ticket__recast) AS jira_parent
+    ON jira_ticket.ticket_key = jira_parent.parent_ticket_key
 )
 
 SELECT 
