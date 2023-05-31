@@ -20,7 +20,7 @@ WITH jira_ticket_generate AS (
     FROM jira_ticket_generate
 )
 
-, jira_ticket_add_boolean_columns AS (
+, jira_ticket_add_update_iteration AS (
   SELECT
     jira_ticket.ticket_key
     , jira_ticket.sprint
@@ -33,27 +33,55 @@ WITH jira_ticket_generate AS (
     , jira_ticket.ticket_type
     , jira_ticket.start_date
     , jira_ticket.story_points
-    , jira_date.dde_iteration AS update_iteration
     , CASE
-        WHEN jira_parent.parent_ticket_key IS NOT NULL THEN TRUE
-        ELSE FALSE END
-      AS is_parent
-    , CASE
-        WHEN update_date = MAX(update_date) OVER(PARTITION BY dde_iteration, ticket_key) THEN TRUE
-        ELSE FALSE END
-      AS is_current_row
-    , CASE
-        WHEN LENGTH(sprint) > 20 THEN TRUE
-        ELSE FALSE END
-      AS is_delayed_task
+        WHEN update_date BETWEEN '2023-02-15' AND '2023-02-28' THEN 'PI8 Iteration 1'
+        WHEN update_date BETWEEN '2023-03-01' AND '2023-03-14' THEN 'PI8 Iteration 2'
+        WHEN update_date BETWEEN '2023-03-15' AND '2023-03-28' THEN 'PI8 Iteration 3'
+        WHEN update_date BETWEEN '2023-03-29' AND '2023-04-11' THEN 'PI8 Iteration 4'
+        WHEN update_date BETWEEN '2023-04-12' AND '2023-05-07' THEN 'PI8 Iteration 5'
+        WHEN update_date BETWEEN '2023-05-08' AND '2023-05-14' THEN 'PI9 Planning Week'
+        WHEN update_date BETWEEN '2023-05-17' AND '2023-05-31 03:45:00' THEN 'PI9 Iteration 1'
+        WHEN update_date BETWEEN '2023-05-31 03:45:01' AND '2023-06-14 03:00:00' THEN 'PI9 Iteration 2'
+        WHEN update_date BETWEEN '2023-06-14 03:00:01' AND '2023-06-28 03:00:00' THEN 'PI9 Iteration 3'
+        WHEN update_date BETWEEN '2023-06-28 03:00:01' AND '2023-07-12 03:00:00' THEN 'PI9 Iteration 4'
+        WHEN update_date BETWEEN '2023-07-12 03:00:01' AND '2023-07-25 03:00:00' THEN 'PI9 Iteration 5'
+        ELSE 'Undefined' END 
+    AS update_iteration
   FROM jira_ticket__recast AS jira_ticket
   LEFT JOIN (
       SELECT DISTINCT
         parent_ticket_key
       FROM jira_ticket__recast) AS jira_parent
     ON jira_ticket.ticket_key = jira_parent.parent_ticket_key
-  LEFT JOIN {{ ref('jira_date') }} AS jira_date
-    ON CAST(jira_ticket.update_date AS DATE) = jira_date.date
+)
+
+, jira_ticket_define_flags AS (
+    SELECT
+        ticket_key
+        , sprint
+        , ticket_status
+        , parent_ticket_key
+        , ticket_name
+        , update_date
+        , assignee
+        , end_date
+        , ticket_type
+        , start_date
+        , story_points
+        , update_iteration
+        , CASE
+            WHEN parent_ticket_key IS NOT NULL THEN TRUE
+            ELSE FALSE END
+        AS is_parent
+        , CASE
+            WHEN update_date = MAX(update_date) OVER(PARTITION BY update_iteration, ticket_key) THEN TRUE
+            ELSE FALSE END
+        AS is_current_row
+        , CASE
+            WHEN LENGTH(sprint) > 20 THEN TRUE
+            ELSE FALSE END
+        AS is_delayed_task
+    FROM jira_ticket_add_update_iteration
 )
 
 SELECT 
@@ -72,10 +100,10 @@ SELECT
   , story_points
   , update_iteration
   , is_current_row
-FROM jira_ticket_add_boolean_columns, UNNEST(SPLIT(sprint, ';')) AS sprint
+FROM jira_ticket_define_flags, UNNEST(SPLIT(sprint, ';')) AS sprint
 
 UNION ALL
-SELECT 
+SELECT
   ticket_key
   , sprint
   , ticket_status
@@ -91,6 +119,7 @@ SELECT
   , story_points
   , update_iteration
   , is_current_row
-FROM jira_ticket_add_boolean_columns
+FROM jira_ticket_define_flags
 WHERE sprint IS NULL
+ORDER BY update_date DESC
 --Filter set for Looker Studio reporting: update_iteration within reporting iteration & is_current_row = True
