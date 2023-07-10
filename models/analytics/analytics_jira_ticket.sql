@@ -41,10 +41,10 @@ WITH jira_ticket_generate AS (
         WHEN update_date BETWEEN '2023-04-12' AND '2023-05-07' THEN 'PI8 Iteration 5'
         WHEN update_date BETWEEN '2023-05-08' AND '2023-05-14' THEN 'PI9 Planning Week'
         WHEN update_date BETWEEN '2023-05-17' AND '2023-05-31 10:45:00' THEN 'PI9 Iteration 1'
-        WHEN update_date BETWEEN '2023-05-31 10:45:01' AND '2023-06-14 10:00:00' THEN 'PI9 Iteration 2'
-        WHEN update_date BETWEEN '2023-06-14 10:00:01' AND '2023-06-28 10:00:00' THEN 'PI9 Iteration 3'
-        WHEN update_date BETWEEN '2023-06-28 10:00:01' AND '2023-07-12 10:00:00' THEN 'PI9 Iteration 4'
-        WHEN update_date BETWEEN '2023-07-12 10:00:01' AND '2023-07-25 10:00:00' THEN 'PI9 Iteration 5'
+        WHEN update_date BETWEEN '2023-05-31 10:45:01' AND '2023-06-14 10:30:00' THEN 'PI9 Iteration 2'
+        WHEN update_date BETWEEN '2023-06-14 10:30:01' AND '2023-06-28 10:30:00' THEN 'PI9 Iteration 3'
+        WHEN update_date BETWEEN '2023-06-28 10:30:01' AND '2023-07-12 10:30:00' THEN 'PI9 Iteration 4'
+        WHEN update_date BETWEEN '2023-07-12 10:30:01' AND '2023-07-25 10:30:00' THEN 'PI9 Iteration 5'
         ELSE 'Undefined' END 
     AS update_iteration
   FROM jira_ticket__recast
