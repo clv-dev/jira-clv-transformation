@@ -44,7 +44,7 @@ WITH jira_ticket_generate AS (
         WHEN update_date BETWEEN '2023-05-31 10:45:01' AND '2023-06-14 10:30:00' THEN 'PI9 Iteration 2'
         WHEN update_date BETWEEN '2023-06-14 10:30:01' AND '2023-06-28 10:30:00' THEN 'PI9 Iteration 3'
         WHEN update_date BETWEEN '2023-06-28 10:30:01' AND '2023-07-12 10:30:00' THEN 'PI9 Iteration 4'
-        WHEN update_date BETWEEN '2023-07-12 10:30:01' AND '2023-07-25 10:30:00' THEN 'PI9 Iteration 5'
+        WHEN update_date BETWEEN '2023-07-12 10:30:01' AND '2023-07-26 10:30:00' THEN 'PI9 Iteration 5'
         WHEN update_date BETWEEN '2023-08-09 10:30:01' AND '2023-08-22 10:30:00' THEN 'PI10 Iteration 1' 
         WHEN update_date BETWEEN '2023-08-23 10:30:01' AND '2023-09-05 10:30:00' THEN 'PI10 Iteration 2' 
         WHEN update_date BETWEEN '2023-09-06 10:30:01' AND '2023-09-19 10:30:00' THEN 'PI10 Iteration 3'
