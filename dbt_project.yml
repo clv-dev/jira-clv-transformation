@@ -33,6 +33,7 @@ models:
   template_by_vitlamdata:
     analytics:
       +materialized: table
+      +schema: analytics
 
     role_playing_dimensions:
       +materialized: view
