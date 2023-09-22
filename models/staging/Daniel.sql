@@ -100,5 +100,11 @@ Clean_package_satus AS (
     AND Status != '-'
     AND Spoke IS NOT NULL
 )
-SELECT *
+SELECT Spoke,
+  Package,
+  PIC,
+  Sprint,
+  Status,
+  Current_status,
+  Previous_Staus
 FROM Clean_package_satus
