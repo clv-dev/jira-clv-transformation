@@ -66,7 +66,7 @@ WITH package_status_raw AS (
     Current_status,
     Previous_Staus,
     Status,
-    REPLACE(Sprint, '_', ' ') AS Sprint
+    TRIM(REPLACE(Sprint, '_', ' ')) AS Sprint
   FROM transform_package_satus
   WHERE Status IS NOT NULL
     AND Status != '-'
