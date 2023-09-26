@@ -1,5 +1,5 @@
 # Documentation: https://docs.getdbt.com/docs/get-started/connection-profiles
-
+### test hutson commit
 template_by_vitlamdata:
   outputs:
     dev:
