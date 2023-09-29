@@ -3,7 +3,7 @@ WITH spoke_package_status_tuple AS (
     spoke_name
     , package_name
     , current_status
-  FROM `looker-team-management-386803.jira_clv_test.pkg_sts_compare`  
+  FROM {{ref('pkg_sts_compare')}} 
   GROUP BY spoke_name, package_name, current_status
 )
 

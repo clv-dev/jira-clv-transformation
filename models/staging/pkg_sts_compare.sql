@@ -1,12 +1,4 @@
-WITH iteration_date AS (
-  SELECT 
-    DISTINCT Sprint_name AS sprint_name
-    , CAST(Sprint_startDate AS DATE) AS iteration_start_date
-    , CAST(Sprint_endDate AS DATE) AS iteration_end_date
-  FROM `looker-team-management-386803.jira_clv_staging.iteration_date_daniel_test`
-)
-
-, n1st_join_table AS (
+WITH n1st_join_table AS (
   SELECT 
     a.spoke_name
     , a.package_name
@@ -16,15 +8,15 @@ WITH iteration_date AS (
     , i.iteration_end_date
     , a.actual_status
     , p.planning_status
-  FROM `looker-team-management-386803.jira_clv_test.pkg_sts_actual_tracking` a
-  LEFT JOIN `looker-team-management-386803.jira_clv_test.pkg_sts_projection_tracking` p
+  FROM {{ref('pkg_sts_actual_tracking')}} AS a
+  LEFT JOIN {{ref('pkg_sts_projection_tracking')}} AS p
     ON a.index = p.index
     AND a.sprint = p.sprint
 
   -- Only include already-started sprints
   INNER JOIN (
     SELECT *
-    FROM iteration_date
+    FROM {{ref('iteration_date')}}
     WHERE iteration_start_date <= CURRENT_DATE()
     ) i
     ON a.sprint = i.sprint_name
