@@ -35,9 +35,10 @@ models:
       +materialized: table
       +schema: analytics
 
-    role_playing_dimensions:
-      +materialized: view
+    staging:
+      +materialized: table
+      +schema: staging
 
-    staging: 
+    test: 
       +materialized: view
       +schema: test

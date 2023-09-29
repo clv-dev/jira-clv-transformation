@@ -16,7 +16,7 @@ WITH iteration_date AS (
     , i.iteration_end_date
     , a.actual_status
     , p.planning_status
-  FROM `looker-team-management-386803.jira_clv_test.pkg_sts_actual_tracking` a
+  FROM {{ref ('pkg_sts_projection_tracking') }} a
   LEFT JOIN `looker-team-management-386803.jira_clv_test.pkg_sts_projection_tracking` p
     ON a.index = p.index
     AND a.sprint = p.sprint
