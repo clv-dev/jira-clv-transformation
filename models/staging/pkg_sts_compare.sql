@@ -25,7 +25,7 @@ WITH iteration_date AS (
   INNER JOIN (
     SELECT *
     FROM iteration_date
-    WHERE iteration_start_date < CURRENT_DATE()
+    WHERE iteration_start_date <= CURRENT_DATE()
     ) i
     ON a.sprint = i.sprint_name
 )
