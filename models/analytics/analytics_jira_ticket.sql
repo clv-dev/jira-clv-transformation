@@ -49,8 +49,8 @@ WITH jira_ticket_generate AS (
         WHEN update_date BETWEEN '2023-08-23 10:30:01' AND '2023-09-06 10:30:00' THEN 'PI10 Iteration 2' 
         WHEN update_date BETWEEN '2023-09-06 10:30:01' AND '2023-09-20 10:30:00' THEN 'PI10 Iteration 3'
         WHEN update_date BETWEEN '2023-09-20 10:30:01' AND '2023-10-04 10:30:00' THEN 'PI10 Iteration 4'
-        WHEN update_date BETWEEN '2023-10-04 10:30:01' AND '2023-10-18 10:30:00' THEN 'PI10 Iteration 5'   
-        ELSE 'Undefined' END 
+        WHEN update_date BETWEEN '2023-10-04 10:30:01' AND '2023-10-18 10:30:00' THEN 'PI10 Iteration 5'
+        ELSE 'Undefined' END
     AS update_iteration
   FROM jira_ticket__recast
 )
@@ -76,7 +76,7 @@ WITH jira_ticket_generate AS (
         , CASE
             WHEN update_date = MAX(update_date) OVER(PARTITION BY update_iteration, ticket_key) THEN TRUE
             ELSE FALSE END
-        AS is_current_row
+        AS is_reporting_row
         , CASE
             WHEN LENGTH(sprint) > 20 THEN TRUE
             ELSE FALSE END
