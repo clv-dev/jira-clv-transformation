@@ -77,20 +77,20 @@ WITH iteration_date AS (
         WHEN DATE_DIFF(iteration_end_date, CURRENT_DATE, DAY) > -20 AND DATE_DIFF(iteration_end_date, CURRENT_DATE, DAY) <= -5 THEN 'Previous Iteration'
         END AS sprint_status
     , CASE 
-        WHEN Actual_Status ='To Do' THEN 1
-        WHEN Actual_Status ='In Progress' THEN 2
-        WHEN Actual_Status ='Testing' THEN 3
-        WHEN Actual_Status ='Bug Raised' THEN 4  
-        WHEN Actual_Status ='Dev Done' THEN 5
-        WHEN Actual_Status ='Staging' THEN 6
+        WHEN actual_status ='To Do' THEN 1
+        WHEN actual_status ='In Progress' THEN 2
+        WHEN actual_status ='Testing' THEN 3
+        WHEN actual_status ='Bug Raised' THEN 4  
+        WHEN actual_status ='Dev Done' THEN 5
+        WHEN actual_status ='Staging' THEN 6
         ELSE 7 END AS act_decode
     , CASE 
-        WHEN Planning_Status ='To Do' THEN 1
-        WHEN Planning_Status ='In Progress' THEN 2
-        WHEN Planning_Status ='Testing' THEN 3
-        WHEN Planning_Status ='Bug Raised' THEN 4  
-        WHEN Planning_Status ='Dev Done' THEN 5
-        WHEN Planning_Status ='Staging' THEN 6
+        WHEN planning_status ='To Do' THEN 1
+        WHEN planning_status ='In Progress' THEN 2
+        WHEN planning_status ='Testing' THEN 3
+        WHEN planning_status ='Bug Raised' THEN 4  
+        WHEN planning_status ='Dev Done' THEN 5
+        WHEN planning_status ='Staging' THEN 6
         ELSE 7 END AS pln_decode
   FROM join_table_with_window AS j
   LEFT JOIN dummy_current_status AS d
