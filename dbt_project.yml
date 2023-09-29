@@ -33,10 +33,12 @@ models:
   template_by_vitlamdata:
     analytics:
       +materialized: table
+      +schema: analytics
 
-    role_playing_dimensions:
-      +materialized: view
-
-    staging: 
-      +materialized: view
+    staging:
+      +materialized: table
       +schema: staging
+
+    test: 
+      +materialized: view
+      +schema: test
