@@ -76,7 +76,7 @@ WITH jira_ticket_generate AS (
         , CASE
             WHEN update_date = MAX(update_date) OVER(PARTITION BY update_iteration, ticket_key) THEN TRUE
             ELSE FALSE END
-        AS is_current_row
+        AS is_reporting_row
         , CASE
             WHEN LENGTH(sprint) > 20 THEN TRUE
             ELSE FALSE END
