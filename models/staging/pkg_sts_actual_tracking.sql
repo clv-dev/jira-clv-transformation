@@ -60,6 +60,7 @@ WITH pkg_sts_actual_raw AS (
     Index
     , Spoke
     , Package
+    , IS_COGNOS__Y_N_
     , PIC
     , CONCAT('DDE ', REPLACE(REPLACE(Sprint, '_', ' '), '  ', '')) AS Sprint
     , Actual_Status
@@ -73,6 +74,7 @@ SELECT
   Index AS index
   , Spoke AS spoke_name
   , Package AS package_name
+  , IS_COGNOS__Y_N_ AS is_cognos
   , PIC AS pic_name
   , Sprint AS sprint
   , Actual_Status AS actual_status

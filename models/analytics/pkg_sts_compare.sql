@@ -2,6 +2,7 @@ WITH n1st_join_table AS (
   SELECT 
     a.spoke_name
     , a.package_name
+    , a.is_cognos
     , a.sprint
     , a.pic_name
     , i.iteration_start_date
@@ -50,6 +51,7 @@ WITH n1st_join_table AS (
   SELECT
     j.spoke_name
     , j.package_name
+    , j.is_cognos
     , j.sprint
     , j.pic_name
     , j.iteration_start_date
@@ -93,6 +95,7 @@ WITH n1st_join_table AS (
   SELECT 
     spoke_name
     , package_name
+    , is_cognos
     , sprint
     , pic_name
     , iteration_start_date
