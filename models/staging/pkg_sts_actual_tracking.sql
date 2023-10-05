@@ -14,13 +14,13 @@ WITH pkg_sts_actual_raw AS (
       {%- set iter_range = range(1,6) -%}
 
       {% for pi in pi_range %}
-        {% for iter in iter_range %}
-          {% if (pi == pi_range[-1]) and (iter == iter_range[-1]) -%}
-      PI{{ pi }}___Iteration_{{ iter }}
-          {%- else -%}
-      PI{{ pi }}___Iteration_{{ iter }},
-          {%- endif -%}
-        {% endfor -%}
+        {% set outerloop = loop %}
+          {%- for iter in iter_range %}
+            PI{{ pi }}___Iteration_{{ iter }}
+              {%- if not (outerloop.last and loop.last) -%}
+                ,
+              {%- endif -%}
+          {% endfor -%}
       {% endfor %}
       
     )
