@@ -30,7 +30,7 @@ WITH pkg_sts_projection_raw AS (
 -- Select necessary records and transform
 , unpivot_pkg_sts_projection_transform AS (
   SELECT
-    s AS Index
+    Index
     , Spoke
     , Package
     , CONCAT('DDE ', REPLACE(Sprint, '_', ' ')) AS Sprint
