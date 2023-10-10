@@ -252,3 +252,4 @@ FROM(
       WHERE
             Sprint_Status ='Current Iteration'
     ) PIVOT( MAX(Package)  FOR Status IN ('To Do','In Progress','Testing','Dev Done','Staging','Production','Bug Raised')) ---Pivot from 3 column in CTE into 7 column base on Status, and the value is Package name that concated in CTE above 
+    -- ss
