@@ -83,7 +83,8 @@ WITH n1st_join_table AS (
         WHEN {{ status }} = 'Bug Raised' THEN 4  
         WHEN {{ status }} = 'Dev Done' THEN 5
         WHEN {{ status }} = 'Staging' THEN 6
-        ELSE 7 END AS {{ status }}_encode
+        WHEN {{ status }} = 'Bug Raised' THEN 7
+        ELSE 8 END AS {{ status }}_encode
     {%- endfor %}
 
   FROM join_table_with_window AS j
