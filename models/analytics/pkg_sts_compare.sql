@@ -2,21 +2,22 @@ WITH n1st_join_table AS (
   SELECT 
     a.spoke_name
     , a.package_name
+    , a.is_cognos
     , a.sprint
     , a.pic_name
     , i.iteration_start_date
     , i.iteration_end_date
     , a.actual_status
     , p.planning_status
-  FROM {{ref('pkg_sts_actual_tracking')}} AS a
-  LEFT JOIN {{ref('pkg_sts_projection_tracking')}} AS p
+  FROM {{ ref('pkg_sts_actual_tracking') }} AS a
+  LEFT JOIN {{ ref('pkg_sts_projection_tracking') }} AS p
     ON a.index = p.index
     AND a.sprint = p.sprint
 
   -- Only include already-started sprints
   INNER JOIN (
     SELECT *
-    FROM {{ref('iteration_date')}}
+    FROM {{ ref('iteration_date') }}
     WHERE iteration_start_date <= CURRENT_DATE()
     ) i
     ON a.sprint = i.sprint_name
@@ -32,7 +33,9 @@ WITH n1st_join_table AS (
 -- Creating dummy components --
 , dummy AS (
   SELECT 
-    *
+    package_name
+    , actual_status
+    , iteration_start_date
     , MAX(iteration_start_date) OVER() AS latest_iteration
   FROM n1st_join_table
 )
@@ -50,6 +53,7 @@ WITH n1st_join_table AS (
   SELECT
     j.spoke_name
     , j.package_name
+    , j.is_cognos
     , j.sprint
     , j.pic_name
     , j.iteration_start_date
@@ -68,22 +72,21 @@ WITH n1st_join_table AS (
         WHEN DATE_DIFF(iteration_end_date, CURRENT_DATE, DAY) > -5 AND DATE_DIFF(iteration_end_date, CURRENT_DATE, DAY) <= 8 THEN 'Current Iteration'
         WHEN DATE_DIFF(iteration_end_date, CURRENT_DATE, DAY) > -20 AND DATE_DIFF(iteration_end_date, CURRENT_DATE, DAY) <= -5 THEN 'Previous Iteration'
         ELSE 'Past Iteration' END AS sprint_status
+
+    {%- set status_list = ['actual_status', 'planning_status'] -%}
+
+    {%- for status in status_list %}
     , CASE 
-        WHEN actual_status = 'To Do' THEN 1
-        WHEN actual_status = 'In Progress' THEN 2
-        WHEN actual_status = 'Testing' THEN 3
-        WHEN actual_status = 'Bug Raised' THEN 4  
-        WHEN actual_status = 'Dev Done' THEN 5
-        WHEN actual_status = 'Staging' THEN 6
-        ELSE 7 END AS act_decode
-    , CASE 
-        WHEN planning_status = 'To Do' THEN 1
-        WHEN planning_status = 'In Progress' THEN 2
-        WHEN planning_status = 'Testing' THEN 3
-        WHEN planning_status = 'Bug Raised' THEN 4  
-        WHEN planning_status = 'Dev Done' THEN 5
-        WHEN planning_status = 'Staging' THEN 6
-        ELSE 7 END AS pln_decode
+        WHEN {{ status }} = 'To Do' THEN 1
+        WHEN {{ status }} = 'In Progress' THEN 2
+        WHEN {{ status }} = 'Testing' THEN 3
+        WHEN {{ status }} = 'Bug Raised' THEN 4  
+        WHEN {{ status }} = 'Dev Done' THEN 5
+        WHEN {{ status }} = 'Staging' THEN 6
+        WHEN {{ status }} = 'Bug Raised' THEN 7
+        ELSE 8 END AS {{ status }}_encode
+    {%- endfor %}
+
   FROM join_table_with_window AS j
   LEFT JOIN dummy_current_status AS d
     ON j.package_name = d.package_name
@@ -93,6 +96,7 @@ WITH n1st_join_table AS (
   SELECT 
     spoke_name
     , package_name
+    , is_cognos
     , sprint
     , pic_name
     , iteration_start_date
@@ -105,8 +109,8 @@ WITH n1st_join_table AS (
     , reach_goal_flg
     , sprint_status
   , CASE
-      WHEN act_decode = pln_decode THEN 'On Schedule'
-      WHEN act_decode < pln_decode THEN 'Behind Schedule'
+      WHEN actual_status_encode = planning_status_encode THEN 'On Schedule'
+      WHEN actual_status_encode < planning_status_encode THEN 'Behind Schedule'
       ELSE 'Ahead of Schedule' END AS progress
   FROM n2nd_join_table
 )
