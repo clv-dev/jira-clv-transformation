@@ -12,41 +12,42 @@ WITH package_status_actual_raw AS (
   FROM 
       package_status_actual_raw UNPIVOT (
         Actual_Status FOR Sprint IN (
-          PI9___Iteration_5,
-          PI9___Iteration_4,
-          PI9___Iteration_3,
-          PI9___Iteration_2,
-          PI9___Iteration_1,
-          PI8___Iteration_5,
-          PI8___Iteration_4,
-          PI8___Iteration_3,
-          PI8___Iteration_2,
-          PI8___Iteration_1,
-          PI14___Iteration_5,
-          PI14___Iteration_4,
-          PI14___Iteration_3,
-          PI14___Iteration_2,
-          PI14___Iteration_1,
-          PI13___Iteration_5,
-          PI13___Iteration_4,
-          PI13___Iteration_3,
-          PI13___Iteration_2,
-          PI13___Iteration_1,
-          PI12___Iteration_5,
-          PI12___Iteration_4,
-          PI12___Iteration_3,
-          PI12___Iteration_2,
-          PI12___Iteration_1,
-          PI11___Iteration_5,
-          PI11___Iteration_4,
-          PI11___Iteration_3,
-          PI11___Iteration_2,
-          PI11___Iteration_1,
-          PI10___Iteration_5,
-          PI10___Iteration_4,
-          PI10___Iteration_3,
-          PI10___Iteration_2,
-          PI10___Iteration_1
+			      PI8___Iteration_1
+          ,	PI8___Iteration_2
+          ,	PI8___Iteration_3
+          ,	PI8___Iteration_4
+          ,	PI8___Iteration_5
+          ,	PI9___Iteration_1
+          ,	PI9___Iteration_2
+          ,	PI9___Iteration_3
+          ,	PI9___Iteration_4
+          ,	PI9___Iteration_5
+          ,	PI10___Iteration_1
+          ,	PI10___Iteration_2
+          ,	PI10___Iteration_3
+          ,	PI10___Iteration_4
+          ,	PI10___Iteration_5
+          ,	PI11___Iteration_1
+          ,	PI11___Iteration_2
+          ,	PI11___Iteration_3
+          ,	PI11___Iteration_4
+          ,	PI11___Iteration_5
+          ,	PI12___Iteration_1
+          ,	PI12___Iteration_2
+          ,	PI12___Iteration_3
+          ,	PI12___Iteration_4
+          ,	PI12___Iteration_5
+          ,	PI13___Iteration_1
+          ,	PI13___Iteration_2
+          ,	PI13___Iteration_3
+          ,	PI13___Iteration_4
+          ,	PI13___Iteration_5
+          ,	PI14___Iteration_1
+          ,	PI14___Iteration_2
+          ,	PI14___Iteration_3
+          ,	PI14___Iteration_4
+          ,	PI14___Iteration_5 
+
         )
     )
 )
@@ -87,7 +88,7 @@ WITH package_status_actual_raw AS (
 --- Unpivot,Clean, and Transform Projection Data
 ,package_status_projection_raw AS (
   SELECT *
-  FROM `looker-team-management-386803.jira_clv_staging.package_status_projection_daniel_test`
+  FROM `looker-team-management-386803.jira_clv_staging.Package_Status__Projection_`
 )
 
 -- unpivot Package Status Projection data
@@ -231,7 +232,8 @@ WITH package_status_actual_raw AS (
         CASE 
             WHEN Date_diff(End_Date,CURRENT_DATE, DAY) > -5  AND  Date_diff(End_Date,CURRENT_DATE, DAY) <= 8 THEN 'Current Iteration'
             -- add more 5days (Wed,Thur,Fri,Sat,Sun) to help Reporter preparing report, and a new sprint status will be changed on the first Monday of the next Sprint
-            WHEN Date_diff(End_Date,CURRENT_DATE, DAY) > -20 AND  Date_diff(End_Date,CURRENT_DATE, DAY) <=-5 THEN 'Previous Iteration' 
+            WHEN Date_diff(End_Date,CURRENT_DATE, DAY) > -20 AND  Date_diff(End_Date,CURRENT_DATE, DAY) <=-5 THEN 'Previous Iteration'
+            WHEN  Date_diff(End_Date,CURRENT_DATE, DAY) > 8                                                  THEN 'Coming Iteration'
             ELSE 'Over Iteration' 
         END AS Sprint_Status
   FROM

@@ -9,47 +9,20 @@ WITH pkg_sts_actual_raw AS (
   FROM pkg_sts_actual_raw 
   UNPIVOT (
     Actual_Status FOR Sprint IN (
-      PI8___Iteration_1,
-      PI8___Iteration_2,
-      PI8___Iteration_3,
-      PI8___Iteration_4,
-      PI8___Iteration_5,
 
-      PI9___Iteration_1,
-      PI9___Iteration_2,
-      PI9___Iteration_3,
-      PI9___Iteration_4,
-      PI9___Iteration_5,
+      {%- set pi_range = range(8,15) -%}
+      {%- set iter_range = range(1,6) -%}
 
-      PI10___Iteration_1,
-      PI10___Iteration_2,
-      PI10___Iteration_3,
-      PI10___Iteration_4,
-      PI10___Iteration_5,
-
-      PI11___Iteration_1,
-      PI11___Iteration_2,
-      PI11___Iteration_3,
-      PI11___Iteration_4,
-      PI11___Iteration_5,
-
-      PI12___Iteration_1,
-      PI12___Iteration_2,
-      PI12___Iteration_3,
-      PI12___Iteration_4,
-      PI12___Iteration_5,
-
-      PI13___Iteration_1,
-      PI13___Iteration_2,
-      PI13___Iteration_3,
-      PI13___Iteration_4,
-      PI13___Iteration_5,
-
-      PI14___Iteration_1,
-      PI14___Iteration_2,
-      PI14___Iteration_3,
-      PI14___Iteration_4,
-      PI14___Iteration_5
+      {% for pi in pi_range %}
+        {% set outerloop = loop %}
+          {%- for iter in iter_range %}
+            PI{{ pi }}___Iteration_{{ iter }}
+              {%- if not (outerloop.last and loop.last) -%}
+                ,
+              {%- endif -%}
+          {% endfor -%}
+      {% endfor %}
+      
     )
   )
 )
@@ -60,6 +33,7 @@ WITH pkg_sts_actual_raw AS (
     Index
     , Spoke
     , Package
+    , IS_COGNOS__Y_N_
     , PIC
     , CONCAT('DDE ', REPLACE(REPLACE(Sprint, '_', ' '), '  ', '')) AS Sprint
     , Actual_Status
@@ -73,6 +47,7 @@ SELECT
   Index AS index
   , Spoke AS spoke_name
   , Package AS package_name
+  , IS_COGNOS__Y_N_ AS is_cognos
   , PIC AS pic_name
   , Sprint AS sprint
   , Actual_Status AS actual_status

@@ -87,7 +87,7 @@ WITH package_status_actual_raw AS (
 --- Unpivot,Clean, and Transform Projection Data
 ,package_status_projection_raw AS (
   SELECT *
-  FROM `looker-team-management-386803.jira_clv_staging.package_status_projection_daniel_test`
+  FROM `looker-team-management-386803.jira_clv_staging.Package_Status__Projection_`
 )
 
 -- unpivot Package Status Projection data
