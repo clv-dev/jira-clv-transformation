@@ -11,7 +11,7 @@ WITH n1st_join_table AS (
     , p.planning_status
   FROM {{ ref('pkg_sts_actual_tracking') }} AS a
   LEFT JOIN {{ ref('pkg_sts_projection_tracking') }} AS p
-    ON a.index = p.index
+    ON a.package_name = p.package_name
     AND a.sprint = p.sprint
 
   -- Only include already-started sprints

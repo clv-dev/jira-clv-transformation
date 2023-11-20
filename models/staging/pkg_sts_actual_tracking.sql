@@ -30,7 +30,7 @@ WITH pkg_sts_actual_raw AS (
 -- Select necessary records and transform
 , unpivot_pkg_sts_actual_transform AS (
   SELECT
-    Index
+    CAST(Index AS integer) AS Index
     , Spoke
     , Package
     , IS_COGNOS__Y_N_
