@@ -77,14 +77,14 @@ WITH n1st_join_table AS (
 
     {%- for status in status_list %}
     , CASE 
+        WHEN {{ status }} = 'Bug Raised' THEN 0
         WHEN {{ status }} = 'To Do' THEN 1
         WHEN {{ status }} = 'In Progress' THEN 2
         WHEN {{ status }} = 'Testing' THEN 3
-        WHEN {{ status }} = 'Bug Raised' THEN 4  
-        WHEN {{ status }} = 'Dev Done' THEN 5
-        WHEN {{ status }} = 'Staging' THEN 6
-        WHEN {{ status }} = 'Bug Raised' THEN 7
-        ELSE 8 END AS {{ status }}_encode
+        WHEN {{ status }} = 'Dev Done' THEN 4
+        WHEN {{ status }} = 'Staging' THEN 5
+        WHEN {{ status }} = 'Enhancement' THEN 6
+        ELSE 7 END AS {{ status }}_encode
     {%- endfor %}
 
   FROM join_table_with_window AS j
