@@ -1,0 +1,111 @@
+WITH RECURSIVE dim_organization__add_ofc_level AS (
+  SELECT
+    OFC_CD
+    , OFC_ENG_NM
+    , PRNT_OFC_CD
+    , 1 AS OFC_LEVEL
+    , CRE_DT
+    , CRE_USR_ID
+    , UPD_DT
+    , UPD_USR_ID
+    , DELT_FLG
+  FROM dim_organization__select_source
+  WHERE PRNT_OFC_CD IS NULL
+
+  UNION ALL
+  SELECT
+    rec.OFC_CD
+    , rec.OFC_ENG_NM
+    , rec.PRNT_OFC_CD
+    , anchor.OFC_LEVEL + 1 AS OFC_LEVEL
+    , rec.CRE_DT
+    , rec.CRE_USR_ID
+    , rec.UPD_DT
+    , rec.UPD_USR_ID
+    , rec.DELT_FLG
+  FROM dim_organization__select_source AS rec
+  JOIN dim_organization__add_ofc_level AS anchor
+    ON rec.PRNT_OFC_CD = anchor.OFC_CD
+)
+
+, dim_organization__select_source AS (
+  SELECT
+    *
+  FROM {{ ref('organization_raw') }}
+)
+
+, dim_organization__multi_attributes AS (
+  SELECT
+    O.OFC_CD
+    , O.OFC_ENG_NM
+    , O.PRNT_OFC_CD
+    , O.OFC_LEVEL
+    , O.CRE_DT
+    , O.CRE_USR_ID
+    , O.UPD_DT
+    , O.UPD_USR_ID
+    , O.DELT_FLG
+    , CASE O.OFC_LEVEL
+      WHEN 1 THEN O.OFC_CD
+      WHEN 2 THEN P1.OFC_CD
+      WHEN 3 THEN P2.OFC_CD
+      WHEN 4 THEN P3.OFC_CD
+      WHEN 5 THEN P4.OFC_CD
+    END AS OFFICE_LEVEL_1
+    , CASE O.OFC_LEVEL
+        WHEN 1 THEN 'UNDEFINED'
+        WHEN 2 THEN O.OFC_CD
+        WHEN 3 THEN P1.OFC_CD
+        WHEN 4 THEN P2.OFC_CD
+        WHEN 5 THEN P3.OFC_CD
+      END AS OFFICE_LEVEL_2
+    , CASE O.OFC_LEVEL
+        WHEN 1 THEN 'UNDEFINED'
+        WHEN 2 THEN 'UNDEFINED'
+        WHEN 3 THEN O.OFC_CD
+        WHEN 4 THEN P1.OFC_CD
+        WHEN 5 THEN P2.OFC_CD
+      END AS OFFICE_LEVEL_3
+    , CASE O.OFC_LEVEL
+        WHEN 1 THEN 'UNDEFINED'
+        WHEN 2 THEN 'UNDEFINED'
+        WHEN 3 THEN 'UNDEFINED'
+        WHEN 4 THEN O.OFC_CD
+        WHEN 5 THEN P1.OFC_CD
+      END AS OFFICE_LEVEL_4
+    , CASE O.OFC_LEVEL
+        WHEN 1 THEN 'UNDEFINED'
+        WHEN 2 THEN 'UNDEFINED'
+        WHEN 3 THEN 'UNDEFINED'
+        WHEN 4 THEN 'UNDEFINED'
+        WHEN 5 THEN O.OFC_CD
+      END AS OFFICE_LEVEL_5
+  FROM dim_organization__add_ofc_level AS O
+  LEFT JOIN dim_organization__add_ofc_level AS P1
+    ON O.PRNT_OFC_CD = P1.OFC_CD
+  LEFT JOIN dim_organization__add_ofc_level AS P2
+    ON P1.PRNT_OFC_CD = P2.OFC_CD
+  LEFT JOIN dim_organization__add_ofc_level AS P3
+    ON P2.PRNT_OFC_CD = P3.OFC_CD
+  LEFT JOIN dim_organization__add_ofc_level AS P4
+    ON P3.PRNT_OFC_CD = P4.OFC_CD
+)
+
+SELECT
+  CAST(OFC_CD AS STRING) AS OFFICE_CODE
+  , CAST(OFC_ENG_NM AS STRING) AS OFFICE_NAME
+  , CAST(PRNT_OFC_CD AS STRING) AS PARENT_OFFICE_CODE
+  , CAST(OFC_LEVEL AS INTEGER) AS OFFICE_LEVEL
+  , CAST(CRE_DT AS DATETIME) AS CREATION_DATE
+  , CAST(CRE_USR_ID AS STRING) AS CREATION_USER_ID
+  , CAST(UPD_DT AS DATETIME) AS UPDATE_DATE
+  , CAST(UPD_USR_ID AS STRING) AS UPDATE_USER_ID
+  , CAST(DELT_FLG AS STRING) AS DELETE_FLAG
+  , CAST(OFFICE_LEVEL_1 AS STRING) AS OFFICE_LEVEL_1
+  , CAST(OFFICE_LEVEL_2 AS STRING) AS OFFICE_LEVEL_2
+  , CAST(OFFICE_LEVEL_3 AS STRING) AS OFFICE_LEVEL_3
+  , CAST(OFFICE_LEVEL_4 AS STRING) AS OFFICE_LEVEL_4
+  , CAST(OFFICE_LEVEL_5 AS STRING) AS OFFICE_LEVEL_5
+FROM dim_organization__multi_attributes 
+WHERE OFFICE_LEVEL_1 IS NOT NULL
+ORDER BY OFFICE_LEVEL

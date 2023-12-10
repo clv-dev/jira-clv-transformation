@@ -14,6 +14,8 @@ profile: 'template_by_vitlamdata'
 # found in the "models/" directory. You probably won't need to change these!
 model-paths: ["models"]
 test-paths: ["tests"]
+snapshot-paths: ["snapshots"]
+seed-paths: ["seeds"]
 
 target-path: "target"  # directory which will store compiled SQL files
 log-path: "logs"
@@ -40,5 +42,9 @@ models:
       +schema: staging
 
     test: 
-      +materialized: view
+      +materialized: table
       +schema: test
+
+seeds:
+  template_by_vitlamdata:
+    +schema: test
