@@ -12,3 +12,9 @@
 - [Airbyte](https://github.com/airbytehq/airbyte) is an open-source application used to extract & load data. However, Google's products (Bigquery, Google Sheet) setting is not ultilized for making incremental mode in Airbyte since all columns are indicated as type string. Therefore, data is loaded into [Postgres](https://www.elephantsql.com/docs/index.html) and changed to type timestamp in prior.
 - [Bigquery](https://cloud.google.com/bigquery) serves as the Data Warehouse for the whole project, providing flexibility and cost-effectiveness for data storage.
 - [DBT](https://github.com/dbt-labs/dbt-core) is an open-source transformation tool, which mainly facilitates the implementaion of modern ELT pipeline. Besides, DBT also offers data quality checks using [DBT Tests](https://docs.getdbt.com/docs/build/data-tests)
+
+# 📃 How to check this project
+- You can find data models at [models/analytics](models/analytics)
+- You can find data quality tests at [tests](tests)
+- You can find Airbyte source code at [airbyte](https://github.com/airbytehq/airbyte)
+- Job scheduler for DBT is hosted by DBT Cloud, more infomation at [DBT Cloud](https://youtu.be/vhq8g_r6bpA?si=VCCIgX7kQF9Y5fk_)
