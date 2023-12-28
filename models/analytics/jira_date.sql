@@ -49,7 +49,6 @@ SELECT
       ELSE 'Invalid' END
     AS is_holiday
   , IFNULL(dim_holiday.holiday_name, 'Undefined') AS holiday_name
-  AS dde_iteration
 FROM dim_date__extract_components AS dim_date
 LEFT JOIN `looker-team-management-386803.jira_clv_staging.jira_holiday` AS dim_holiday
   ON dim_date.date = dim_holiday.holiday_date

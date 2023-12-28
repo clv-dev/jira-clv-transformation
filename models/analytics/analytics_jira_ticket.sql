@@ -34,23 +34,32 @@ WITH jira_ticket_generate AS (
     , start_date
     , story_points
     , CASE
+        ----PI8----
         WHEN update_date BETWEEN '2023-02-15' AND '2023-02-28' THEN 'PI8 Iteration 1'
         WHEN update_date BETWEEN '2023-03-01' AND '2023-03-14' THEN 'PI8 Iteration 2'
         WHEN update_date BETWEEN '2023-03-15' AND '2023-03-28' THEN 'PI8 Iteration 3'
         WHEN update_date BETWEEN '2023-03-29' AND '2023-04-11' THEN 'PI8 Iteration 4'
         WHEN update_date BETWEEN '2023-04-12' AND '2023-05-07' THEN 'PI8 Iteration 5'
+        ----PI9-----
         WHEN update_date BETWEEN '2023-05-08' AND '2023-05-14' THEN 'PI9 Planning Week'
         WHEN update_date BETWEEN '2023-05-17' AND '2023-05-31 10:45:00' THEN 'PI9 Iteration 1'
         WHEN update_date BETWEEN '2023-05-31 10:45:01' AND '2023-06-14 10:30:00' THEN 'PI9 Iteration 2'
         WHEN update_date BETWEEN '2023-06-14 10:30:01' AND '2023-06-28 10:30:00' THEN 'PI9 Iteration 3'
         WHEN update_date BETWEEN '2023-06-28 10:30:01' AND '2023-07-12 10:30:00' THEN 'PI9 Iteration 4'
         WHEN update_date BETWEEN '2023-07-12 10:30:01' AND '2023-07-26 10:30:00' THEN 'PI9 Iteration 5'
+        ----PI10-----
         WHEN update_date BETWEEN '2023-08-09 10:30:01' AND '2023-08-23 10:30:00' THEN 'PI10 Iteration 1' 
         WHEN update_date BETWEEN '2023-08-23 10:30:01' AND '2023-09-06 10:30:00' THEN 'PI10 Iteration 2' 
         WHEN update_date BETWEEN '2023-09-06 10:30:01' AND '2023-09-20 10:30:00' THEN 'PI10 Iteration 3'
         WHEN update_date BETWEEN '2023-09-20 10:30:01' AND '2023-10-04 10:30:00' THEN 'PI10 Iteration 4'
-        WHEN update_date BETWEEN '2023-10-04 10:30:01' AND '2023-10-18 10:30:00' THEN 'PI10 Iteration 5'   
-        ELSE 'Undefined' END 
+        WHEN update_date BETWEEN '2023-10-04 10:30:01' AND '2023-10-25 10:30:00' THEN 'PI10 Iteration 5'
+        ----PI11-----
+        WHEN update_date BETWEEN '2023-11-08 10:30:01' AND '2023-11-22 10:30:00' THEN 'PI11 Iteration 1' 
+        WHEN update_date BETWEEN '2023-11-22 10:30:01' AND '2023-12-06 10:30:00' THEN 'PI11 Iteration 2' 
+        WHEN update_date BETWEEN '2023-12-06 10:30:01' AND '2023-12-20 10:30:00' THEN 'PI11 Iteration 3'
+        WHEN update_date BETWEEN '2023-12-20 10:30:01' AND '2024-01-03 10:30:00' THEN 'PI11 Iteration 4'
+        WHEN update_date BETWEEN '2024-01-03 10:30:01' AND '2023-01-24 10:30:00' THEN 'PI11 Iteration 5'
+        ELSE 'Undefined' END
     AS update_iteration
   FROM jira_ticket__recast
 )
