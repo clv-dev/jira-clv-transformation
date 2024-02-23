@@ -105,11 +105,15 @@ WITH jira_ticket_generate AS (
     ON jira_ticket.ticket_key = jira_parent.parent_ticket_key
 )
 
+, final_jira_analytics AS (
 SELECT 
   ticket_key
   , sprint
-  , ticket_status
-  , parent_ticket_key
+  , ticket_status AS actual_ticket_status
+  , CASE 
+        WHEN ticket_status NOT IN ('Backlog', 'Done', 'TO DO', 'Cancelled') THEN 'In Progress'
+        ELSE ticket_status
+    END AS ticket_status  , parent_ticket_key
   , is_parent
   , is_delayed_task
   , ticket_name
@@ -127,7 +131,11 @@ UNION ALL
 SELECT
   ticket_key
   , sprint
-  , ticket_status
+  , ticket_status AS actual_ticket_status
+  , CASE 
+        WHEN ticket_status NOT IN ('Backlog', 'Done', 'TO DO', 'Cancelled') THEN 'In Progress'
+        ELSE ticket_status
+    END AS ticket_status
   , parent_ticket_key
   , is_parent
   , is_delayed_task
@@ -142,5 +150,28 @@ SELECT
   , is_current_row
 FROM jira_ticket_define_flags
 WHERE sprint IS NULL
+
+)
+
+SELECT
+    ticket_key
+  , sprint
+  , actual_ticket_status
+  , ticket_status
+  , parent_ticket_key
+  , is_parent
+  , is_delayed_task
+  , ticket_name
+  , update_date
+  , assignee
+  , end_date
+  , ticket_type
+  , start_date
+  , story_points
+  , update_iteration
+  , is_current_row
+
+FROM final_jira_analytics
+
 ORDER BY update_date DESC
 --Filter set for Looker Studio reporting: update_iteration within reporting iteration & is_current_row = True
