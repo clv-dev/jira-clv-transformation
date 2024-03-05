@@ -55,10 +55,17 @@ WITH jira_ticket_generate AS (
         WHEN update_date BETWEEN '2023-10-04 10:30:01' AND '2023-10-25 10:30:00' THEN 'PI10 Iteration 5'
         ----PI11-----
         WHEN update_date BETWEEN '2023-11-08 10:30:01' AND '2023-11-22 10:30:00' THEN 'PI11 Iteration 1' 
-        WHEN update_date BETWEEN '2023-11-22 10:30:01' AND '2023-12-06 10:30:00' THEN 'PI11 Iteration 2' 
+        WHEN update_date BETWEEN '2023-11-22 10:30:01' AND '2023-12-06 10:30:00' THEN 'PI11 Iteration 2'
         WHEN update_date BETWEEN '2023-12-06 10:30:01' AND '2023-12-20 10:30:00' THEN 'PI11 Iteration 3'
         WHEN update_date BETWEEN '2023-12-20 10:30:01' AND '2024-01-03 10:30:00' THEN 'PI11 Iteration 4'
-        WHEN update_date BETWEEN '2024-01-03 10:30:01' AND '2023-01-24 10:30:00' THEN 'PI11 Iteration 5'
+        WHEN update_date BETWEEN '2024-01-03 10:30:01' AND '2024-01-24 10:30:00' THEN 'PI11 Iteration 5'
+
+        ----PI12----
+        WHEN update_date BETWEEN '2024-02-07 10:30:01' AND '2024-02-21 10:30:00' THEN 'PI12 Iteration 1'
+        WHEN update_date BETWEEN '2024-02-21 10:30:01' AND '2024-03-06 10:30:00' THEN 'PI12 Iteration 2'
+        WHEN update_date BETWEEN '2024-03-06 10:30:01' AND '2024-03-20 10:30:00' THEN 'PI12 Iteration 3'
+        WHEN update_date BETWEEN '2024-03-20 10:30:01' AND '2024-04-03 10:30:00' THEN 'PI12 Iteration 4'
+        WHEN update_date BETWEEN '2024-04-03 10:30:01' AND '2024-04-24 10:30:00' THEN 'PI12 Iteration 5'
         ELSE 'Undefined' END
     AS update_iteration
   FROM jira_ticket__recast
@@ -98,11 +105,15 @@ WITH jira_ticket_generate AS (
     ON jira_ticket.ticket_key = jira_parent.parent_ticket_key
 )
 
+, final_jira_analytics AS (
 SELECT 
   ticket_key
   , sprint
-  , ticket_status
-  , parent_ticket_key
+  , ticket_status AS actual_ticket_status
+  , CASE 
+        WHEN ticket_status NOT IN ('Backlog', 'Done', 'TO DO', 'Cancelled') THEN 'In Progress'
+        ELSE ticket_status
+    END AS ticket_status  , parent_ticket_key
   , is_parent
   , is_delayed_task
   , ticket_name
@@ -120,7 +131,11 @@ UNION ALL
 SELECT
   ticket_key
   , sprint
-  , ticket_status
+  , ticket_status AS actual_ticket_status
+  , CASE 
+        WHEN ticket_status NOT IN ('Backlog', 'Done', 'TO DO', 'Cancelled') THEN 'In Progress'
+        ELSE ticket_status
+    END AS ticket_status
   , parent_ticket_key
   , is_parent
   , is_delayed_task
@@ -135,5 +150,28 @@ SELECT
   , is_current_row
 FROM jira_ticket_define_flags
 WHERE sprint IS NULL
+
+)
+
+SELECT
+    ticket_key
+  , sprint
+  , actual_ticket_status
+  , ticket_status
+  , parent_ticket_key
+  , is_parent
+  , is_delayed_task
+  , ticket_name
+  , update_date
+  , assignee
+  , end_date
+  , ticket_type
+  , start_date
+  , story_points
+  , update_iteration
+  , is_current_row
+
+FROM final_jira_analytics
+
 ORDER BY update_date DESC
 --Filter set for Looker Studio reporting: update_iteration within reporting iteration & is_current_row = True
