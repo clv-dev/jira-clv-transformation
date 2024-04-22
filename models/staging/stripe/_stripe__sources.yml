@@ -1,0 +1,9 @@
+version: 2
+
+sources:
+  - name: looker_management
+    database: looker-team-management-386803
+    schema: jira_clv_staging  
+    tables:
+      - name: jira_raw_sprint_issues
+      - name: jira_raw_issues
