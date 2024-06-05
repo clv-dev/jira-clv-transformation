@@ -52,4 +52,3 @@ SELECT
   , Sprint AS sprint
   , Actual_Status AS actual_status
 FROM unpivot_pkg_sts_actual_transform
-WHERE Package = 'CDAS'
