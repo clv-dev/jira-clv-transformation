@@ -1,6 +1,6 @@
 WITH pkg_sts_actual_raw AS (
   SELECT *
-  FROM `looker-team-management-386803.jira_clv_staging.Package_Status__Actual_`
+  FROM `looker-team-management-386803.jira_clv_staging.Package_Status_Actual`
 )
 
 -- Unpivot status values under each sprint
@@ -10,13 +10,13 @@ WITH pkg_sts_actual_raw AS (
   UNPIVOT (
     Actual_Status FOR Sprint IN (
 
-      {%- set pi_range = range(8,15) -%}
+      {%- set pi_range = range(8,21) -%}
       {%- set iter_range = range(1,6) -%}
 
       {% for pi in pi_range %}
         {% set outerloop = loop %}
           {%- for iter in iter_range %}
-            PI{{ pi }}___Iteration_{{ iter }}
+            PI{{ pi }}_Iteration_{{ iter }}
               {%- if not (outerloop.last and loop.last) -%}
                 ,
               {%- endif -%}
@@ -35,7 +35,7 @@ WITH pkg_sts_actual_raw AS (
     , Package
     , IS_COGNOS__Y_N_
     , PIC
-    , CONCAT('DDE ', REPLACE(REPLACE(Sprint, '_', ' '), '  ', '')) AS Sprint
+    , CONCAT('DDE ', REPLACE(Sprint, '_', ' ')) AS Sprint
     , Actual_Status
   FROM unpivot_pkg_sts_actual_raw
   WHERE Actual_Status IS NOT NULL
@@ -52,3 +52,4 @@ SELECT
   , Sprint AS sprint
   , Actual_Status AS actual_status
 FROM unpivot_pkg_sts_actual_transform
+WHERE Package = 'CDAS'

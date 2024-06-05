@@ -1,6 +1,6 @@
 WITH pkg_sts_projection_raw AS (
   SELECT *
-  FROM `looker-team-management-386803.jira_clv_staging.Package_Status__Projection_`
+  FROM `looker-team-management-386803.jira_clv_staging.Package_Status_Projection`
 )
 
 -- Unpivot status values under each sprint
@@ -10,7 +10,7 @@ WITH pkg_sts_projection_raw AS (
   UNPIVOT (
     Planning_Status FOR Sprint IN (
 
-      {%- set pi_range = range(8,15) -%}
+      {%- set pi_range = range(8,21) -%}
       {%- set iter_range = range(1,6) -%}
 
       {% for pi in pi_range %}
