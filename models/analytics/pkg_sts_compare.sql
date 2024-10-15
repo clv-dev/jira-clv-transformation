@@ -65,9 +65,9 @@ WITH n1st_join_table AS (
     , CASE 
         WHEN current_status != previous_status THEN TRUE 
         ELSE FALSE END AS is_status_updated
-    , CASE 
-        WHEN actual_status = planning_status THEN TRUE 
-        ELSE FALSE END AS reach_goal_flg
+    -- , CASE 
+    --     WHEN actual_status = planning_status THEN TRUE 
+    --     ELSE FALSE END AS reach_goal_flg
     , CASE 
         WHEN DATE_DIFF(iteration_end_date, CURRENT_DATE, DAY) > -5 AND DATE_DIFF(iteration_end_date, CURRENT_DATE, DAY) <= 8 THEN 'Current Iteration'
         WHEN DATE_DIFF(iteration_end_date, CURRENT_DATE, DAY) > -20 AND DATE_DIFF(iteration_end_date, CURRENT_DATE, DAY) <= -5 THEN 'Previous Iteration'
@@ -83,7 +83,7 @@ WITH n1st_join_table AS (
         WHEN {{ status }} = 'Testing' THEN 3
         WHEN {{ status }} = 'Dev Done' THEN 4
         WHEN {{ status }} = 'Staging' THEN 5
-        WHEN {{ status }} = 'Enhancement' THEN 6
+        WHEN {{ status }} = 'Production' THEN 6
         ELSE 7 END AS {{ status }}_encode
     {%- endfor %}
 
@@ -106,12 +106,15 @@ WITH n1st_join_table AS (
     , previous_status
     , current_status
     , is_status_updated
-    , reach_goal_flg
     , sprint_status
   , CASE
       WHEN actual_status_encode = planning_status_encode THEN 'On Schedule'
       WHEN actual_status_encode < planning_status_encode THEN 'Behind Schedule'
       ELSE 'Ahead of Schedule' END AS progress
+  ,   , CASE
+      WHEN actual_status_encode = planning_status_encode THEN TRUE
+      WHEN actual_status_encode < planning_status_encode THEN FALSE
+      ELSE TRUE END AS reach_goal_flg
   FROM n2nd_join_table
 )
 
