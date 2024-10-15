@@ -83,7 +83,7 @@ WITH n1st_join_table AS (
         WHEN {{ status }} = 'Testing' THEN 3
         WHEN {{ status }} = 'Dev Done' THEN 4
         WHEN {{ status }} = 'Staging' THEN 5
-        WHEN {{ status }} = 'Enhancement' THEN 6
+        WHEN {{ status }} = 'Production' THEN 6
         ELSE 7 END AS {{ status }}_encode
     {%- endfor %}
 
