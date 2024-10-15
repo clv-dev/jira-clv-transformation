@@ -111,7 +111,7 @@ WITH n1st_join_table AS (
       WHEN actual_status_encode = planning_status_encode THEN 'On Schedule'
       WHEN actual_status_encode < planning_status_encode THEN 'Behind Schedule'
       ELSE 'Ahead of Schedule' END AS progress
-  ,   , CASE
+  , CASE
       WHEN actual_status_encode = planning_status_encode THEN TRUE
       WHEN actual_status_encode < planning_status_encode THEN FALSE
       ELSE TRUE END AS reach_goal_flg
